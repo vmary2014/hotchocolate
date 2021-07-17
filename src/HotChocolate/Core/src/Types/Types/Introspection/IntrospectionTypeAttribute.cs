@@ -9,8 +9,7 @@ namespace HotChocolate.Types
         AttributeTargets.Class,
         Inherited = false,
         AllowMultiple = false)]
-    internal sealed class IntrospectionAttribute
-        : Attribute
+    internal sealed class IntrospectionAttribute : Attribute
     {
     }
 }
