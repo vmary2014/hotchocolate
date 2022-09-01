@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using HotChocolate.Execution.Configuration;
 using HotChocolate.Language;
+using HotChocolate.Types;
+using HotChocolate.Utilities;
 using StackExchange.Redis;
 
 namespace HotChocolate.Stitching.Redis
@@ -16,17 +18,20 @@ namespace HotChocolate.Stitching.Redis
         private readonly NameString _schemaName;
         private readonly NameString _configurationName;
         private readonly IDatabase _database;
+        private readonly List<string> _schemasConfigured;
         private readonly List<OnChangeListener> _listeners = new List<OnChangeListener>();
 
         public RedisExecutorOptionsProvider(
             NameString schemaName,
             NameString configurationName,
             IDatabase database,
-            ISubscriber subscriber)
+            ISubscriber subscriber,
+            List<string> schemasConfigured)
         {
             _schemaName = schemaName;
             _configurationName = configurationName;
             _database = database;
+            _schemasConfigured = schemasConfigured;
             subscriber.Subscribe(configurationName.Value).OnMessage(OnChangeMessageAsync);
         }
 
@@ -88,13 +93,16 @@ namespace HotChocolate.Stitching.Redis
 
             foreach (var schemaName in items.Select(t => (string)t))
             {
-                cancellationToken.ThrowIfCancellationRequested();
+                if (_schemasConfigured.Contains(schemaName))
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                RemoteSchemaDefinition schemaDefinition =
-                    await GetRemoteSchemaDefinitionAsync(schemaName)
-                        .ConfigureAwait(false);
+                    RemoteSchemaDefinition schemaDefinition =
+                        await GetRemoteSchemaDefinitionAsync(schemaName)
+                            .ConfigureAwait(false);
 
-                schemaDefinitions.Add(schemaDefinition);
+                    schemaDefinitions.Add(schemaDefinition);
+                }
             }
 
             return schemaDefinitions;
