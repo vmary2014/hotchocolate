@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IRequestExecutorBuilder builder,
             NameString configurationName,
             Func<IServiceProvider, IConnectionMultiplexer> connectionFactory,
-            List<string>? schemasConfigured = null)
+            List<string> schemasConfigured)
         {
             if (connectionFactory is null)
             {

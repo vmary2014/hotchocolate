@@ -32,6 +32,7 @@ namespace HotChocolate.Stitching.Integration
         private const string _inventory = "inventory";
         private const string _products = "products";
         private const string _reviews = "reviews";
+        private List<string> _schemas = new() { "accounts", "inventory", "products", "reviews" };
 
         private readonly ConnectionMultiplexer _connection;
 
@@ -68,7 +69,7 @@ namespace HotChocolate.Stitching.Integration
                     .AddSingleton(httpClientFactory)
                     .AddGraphQL()
                     .AddQueryType(d => d.Name("Query"))
-                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection)
+                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection, _schemas)
                     .ModifyOptions(o => o.SortFieldsByName = true)
                     .BuildSchemaAsync(cancellationToken: cts.Token);
 
@@ -101,7 +102,7 @@ namespace HotChocolate.Stitching.Integration
                     .AddSingleton(httpClientFactory)
                     .AddGraphQL()
                     .AddQueryType(d => d.Name("Query"))
-                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection)
+                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection, _schemas)
                     .Services
                     .BuildServiceProvider()
                     .GetRequiredService<IRequestExecutorResolver>();
@@ -167,7 +168,7 @@ namespace HotChocolate.Stitching.Integration
                     .AddSingleton(httpClientFactory)
                     .AddGraphQL()
                     .AddQueryType(d => d.Name("Query").Field("foo").Resolve("foo"))
-                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection)
+                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection, _schemas)
                     .Services
                     .BuildServiceProvider();
 
@@ -249,7 +250,7 @@ namespace HotChocolate.Stitching.Integration
                     .AddSingleton(httpClientFactory)
                     .AddGraphQL()
                     .AddQueryType(d => d.Name("Query"))
-                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection)
+                    .AddRemoteSchemasFromRedis(configurationName, _ => _connection, _schemas)
                     .BuildRequestExecutorAsync(cancellationToken: cts.Token);
 
             // act
@@ -298,7 +299,7 @@ namespace HotChocolate.Stitching.Integration
                         .AddSingleton(httpClientFactory)
                         .AddGraphQL(configurationName)
                         .AddQueryType(d => d.Name("Query").Field("local").Resolve("I am local."))
-                        .AddRemoteSchemasFromRedis(configurationName, _ => _connection)
+                        .AddRemoteSchemasFromRedis(configurationName, _ => _connection, _schemas)
                         .BuildRequestExecutorAsync(configurationName, ct);
 
                 // act
