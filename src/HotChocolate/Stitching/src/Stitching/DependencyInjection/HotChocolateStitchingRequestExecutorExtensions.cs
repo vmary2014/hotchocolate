@@ -19,6 +19,7 @@ using HotChocolate.Stitching.Pipeline;
 using HotChocolate.Stitching.Requests;
 using HotChocolate.Stitching.SchemaDefinitions;
 using HotChocolate.Stitching.Utilities;
+using HotChocolate.Types;
 using HotChocolate.Utilities;
 using HotChocolate.Utilities.Introspection;
 using static HotChocolate.Stitching.ThrowHelper;
